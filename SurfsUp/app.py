@@ -1,10 +1,11 @@
 # Import the dependencies.
-
+from flask import Flask, jsonify
 
 
 #################################################
 # Database Setup
 #################################################
+app = Flask(__name__)
 
 # Create engine using the `hawaii.sqlite` database file
 

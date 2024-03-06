@@ -48,7 +48,9 @@ def home():
 
 @app.rout("/api/v1.0/precipitation")
 def precipitation():
-    results = session.query(Measurement.)
+    date = session.query(Measurement.date)
+    prcp = session.query(Measurement.prcp).all()
+
 
 if __name__ == '__main__':
     app.run(debug=True)

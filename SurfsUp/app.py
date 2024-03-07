@@ -26,6 +26,7 @@ Station = Base.classes.station
 # Create a session
 session = Session(engine)
 conn = engine.connect()
+session.close()
 
 #################################################
 # Flask Setup
@@ -48,8 +49,24 @@ def home():
 
 @app.rout("/api/v1.0/precipitation")
 def precipitation():
-    date = session.query(Measurement.date)
-    prcp = session.query(Measurement.prcp).all()
+    session = Session(engine)
+    results = session.query(Measurement.date, Measurement.prcp).all()
+    session.close()
+    measurement_list = []
+    for date, prcp in results:
+        measurement_dict = {date, prcp}
+        measurement_list.append(measurement_dict)
+    return jsonify(measurement_list)
+
+@app.rout("/api/v1.0/stations")
+def stations():
+    session = Session(engine)
+    results = session.query(Station.station, Station.name, Station.latitude, Station.longitude, Station.elevation)
+    session.close()
+    station_list = []
+    for station, name, latitude, longitude, elevation in results:
+        station_dict = {}
+        station_dict['']
 
 
 if __name__ == '__main__':

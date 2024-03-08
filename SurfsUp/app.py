@@ -3,6 +3,7 @@ from flask import Flask, jsonify
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine, func
+from sqlalchemy import text
 
 
 #################################################
@@ -49,25 +50,33 @@ def home():
 
 @app.rout("/api/v1.0/precipitation")
 def precipitation():
+    start_date = "2016-08-23"
+    end_date = "2017-08-23"
     session = Session(engine)
-    results = session.query(Measurement.date, Measurement.prcp).all()
+    results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date.between(start_date, end_date)).all()
     session.close()
-    measurement_list = []
-    for date, prcp in results:
-        measurement_dict = {date, prcp}
-        measurement_list.append(measurement_dict)
+    measurement_list = [{'date':date, 'precipitation':prcp} for date, prcp in results]
     return jsonify(measurement_list)
 
 @app.rout("/api/v1.0/stations")
 def stations():
     session = Session(engine)
-    results = session.query(Station.station, Station.name, Station.latitude, Station.longitude, Station.elevation)
+    results = session.query(Station.station, Station.name, Station.latitude, Station.longitude, Station.elevation).all()
     session.close()
-    station_list = []
-    for station, name, latitude, longitude, elevation in results:
-        station_dict = {}
-        station_dict['']
+    station_list = [{'station':station, 'name':name, 'latitude':latitude, 'longitude':longitude, 'elevation':elevation}
+                     for station, name, latitude, longitude, elevation in results]
+    return jsonify(station_list)
 
+@app.rout('/api/v1.0/tobs')
+def tobs():
+    session = Session(engine)
+    results = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station == 'USC00519281').all()
+    session.close()
+    tobs_list = [{'date':date, 'tobs':tobs} for date, tobs in results]
+    return jsonify(tobs_list)
+
+@app.rout('/api/v1.0/<start-date>')
+def 
 
 if __name__ == '__main__':
     app.run(debug=True)
